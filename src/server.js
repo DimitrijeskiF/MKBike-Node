@@ -3,6 +3,7 @@ const app = express();
 const userRouter = require('./routers/user');
 const pointsRouter = require('./routers/points');
 const passport = require('passport');
+const path = require('path');
 
 
 const port = process.env.PORT;
@@ -18,7 +19,7 @@ app.use((req, res, next) => {
 
     next()
 })
-
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 require('./auth/auth')(passport);
@@ -26,6 +27,10 @@ require('./auth/auth')(passport);
 app.use(userRouter);
 app.use(pointsRouter);
 
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+  })
 
 app.listen(port, () => {
     console.log('Server is running on ' + port);
