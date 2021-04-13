@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const userRouter = require('./routers/user');
 const pointsRouter = require('./routers/points');
+const priceRouter = require('./routers/price');
 const passport = require('passport');
 const path = require('path');
 
@@ -26,6 +27,7 @@ require('./auth/auth')(passport);
 
 app.use(userRouter);
 app.use(pointsRouter);
+app.use(priceRouter);
 
 
 app.get('*', (req, res) => {
