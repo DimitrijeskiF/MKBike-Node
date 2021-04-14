@@ -52,6 +52,9 @@ const userSchema = new mongoose.Schema({
     }],
     image: {
         type: Buffer
+    },
+    position: {
+        type: String
     }
 })
 

@@ -6,7 +6,7 @@ const priceSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    prices: [{
+    prices: {
         day: {
             type: Number,
             require: true
@@ -20,7 +20,7 @@ const priceSchema = new mongoose.Schema({
             type: Number,
             require: true
         }
-    }]
+    }
 })
 
 const Price = mongoose.model('Price', priceSchema);

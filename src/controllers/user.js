@@ -7,6 +7,15 @@ require('../auth/auth');
 
 exports.createUser = async (req, res) => {
   const user = new User(req.body);
+
+  if (user.ages <= 26) {
+    user.position = 'young'
+  } else if (user.ages >= 62) {
+    user.position = 'retiree'
+  } else {
+    user.position = 'worker'
+  }
+
   try {
     await user.save();
     const token = await user.generateAuthToken();

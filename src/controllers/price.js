@@ -14,7 +14,7 @@ exports.createPrice = async (req, res) => {
 exports.findPricesForYoung = async (req, res) => {
     try {
         const price = await Price.findOne({ type: 'young' })
-        res.status(200).send(price.prices);
+        res.status(200).send({ price: price.prices});
     } catch (error) {
         res.status(404).send();
     }
@@ -23,7 +23,7 @@ exports.findPricesForYoung = async (req, res) => {
 exports.findPricesForWorkers = async (req, res) => {
     try {
         const price = await Price.findOne({ type: 'worker' })
-        res.status(200).send(price.prices);
+        res.status(200).send({ price: price.prices });
     } catch (error) {
         res.status(404).send();
     }
@@ -32,7 +32,7 @@ exports.findPricesForWorkers = async (req, res) => {
 exports.findPricesForRetiree = async (req, res) => {
     try {
         const price = await Price.findOne({ type: 'retiree' })
-        res.status(200).send(price.prices);
+        res.status(200).send({ price: price.prices });
     } catch (error) {
         res.status(404).send();
     }
