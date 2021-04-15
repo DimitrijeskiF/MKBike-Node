@@ -19,9 +19,9 @@ exports.createUser = async (req, res) => {
   try {
     await user.save();
     const token = await user.generateAuthToken();
-    res.status(201).send({ user, token });
+    res.status(201).json({ message: 'Successfully Registered!' });
   } catch (error) {
-    res.status(400).send();
+    res.status(400).json({ message: 'Invalid authentication credentials!' });
   }
 }
 
@@ -49,9 +49,8 @@ exports.loginWithPassport = async (req, res, next) => {
     async (err, user) => {
       try {
         if (err || !user) {
-          const error = new Error('An error occurred.');
-
-          return next(error);
+          res.status(401).json({ message: 'User not found, enter correct credentials!'})
+          return next(err);
         }
 
         req.login(
