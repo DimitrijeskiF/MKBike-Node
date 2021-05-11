@@ -5,6 +5,8 @@ const pointsRouter = require('./routers/points');
 const priceRouter = require('./routers/price');
 const eventRouter = require('./routers/events');
 const newsRouter = require('./routers/news');
+const notificationRouter = require('./routers/notification');
+const fcmTokenRouter = require('./routers/fcmTokens');
 const passport = require('passport');
 const path = require('path');
 
@@ -32,6 +34,8 @@ app.use(pointsRouter);
 app.use(priceRouter);
 app.use(eventRouter);
 app.use(newsRouter);
+app.use(notificationRouter);
+app.use(fcmTokenRouter);
 
 
 app.get('*', (req, res) => {
