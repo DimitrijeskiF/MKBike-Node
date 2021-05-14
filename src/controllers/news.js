@@ -31,3 +31,19 @@ exports.getNews = async (req, res) => {
         })
     }
 }
+
+
+exports.deleteNews = async (req, res) => {
+    try {
+        await Event.findByIdAndDelete(req.params.id);
+        res.status(200).json({
+            success: true,
+            data: {}
+        })
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error
+        })
+    }
+}
