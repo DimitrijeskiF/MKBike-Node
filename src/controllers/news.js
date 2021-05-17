@@ -35,7 +35,7 @@ exports.getNews = async (req, res) => {
 
 exports.deleteNews = async (req, res) => {
     try {
-        await Event.findByIdAndDelete(req.params.id);
+        await News.findByIdAndDelete(req.params.id);
         res.status(200).json({
             success: true,
             data: {}
