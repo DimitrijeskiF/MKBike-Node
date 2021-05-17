@@ -13,21 +13,13 @@ const adminRouter = require('./routers/admin');
 
 const passport = require('passport');
 const path = require('path');
-
+let cors = require('cors')
 
 const port = process.env.PORT;
 
 
 app.use(express.json());
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
-
-    next()
-})
+app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());

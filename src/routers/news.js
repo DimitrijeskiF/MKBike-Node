@@ -5,14 +5,12 @@ const news = require('../controllers/news');
 const passport = require('passport');
 const { authorize } = require('../middleware/admin');
 
-router.use(passport.authenticate('jwt', { session: false }),)
-router.use(authorize('admin'))
 
 
 
-router.post('/news', news.createNews);
 router.get('/news', news.getNews);
-router.delete('/news/:id', news.deleteNews);
+router.post('/news', passport.authenticate('jwt', { session: false }), authorize('admin'), news.createNews);
+router.delete('/news/:id', passport.authenticate('jwt', { session: false }), authorize('admin'), news.deleteNews);
 
 
 module.exports = router
