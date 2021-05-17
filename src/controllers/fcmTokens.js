@@ -13,7 +13,7 @@ exports.creteToken = async (req, res) => {
         const exists = fcmTokenExists.includes(fcmToken.fcmToken);
 
         if (exists) {
-            return {};
+            return 
         }
 
         await fcmToken.save();
