@@ -5,7 +5,7 @@ const passport = require('passport');
 const { authorize } = require('../middleware/admin');
 
 
-router.post('/fcmTokens', passport.authenticate('jwt', { session: false }), fcmTokens.creteToken);
+router.post('/fcmTokens',fcmTokens.creteToken);
 router.get('/fcmTokens', passport.authenticate('jwt', { session: false }), authorize('admin'), fcmTokens.getTokens);
 
 

@@ -9,7 +9,9 @@ const { authorize } = require('../middleware/admin');
 // router.use(authorize('admin'))
 
 
-router.post('/firebase/notification', notifications.sendEventNotification);
+router.post('/notification/event', notifications.sendEventNotification);
+router.post('/notification/news', notifications.sendNewsNotification);
+
 
 
 module.exports = router;

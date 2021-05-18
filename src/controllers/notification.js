@@ -7,26 +7,51 @@ const notification_options = {
     timeToLive: 60 * 60 * 24
 };
 
-const message_notification = {
-    notification: {
-        title: 'Hello',
-        body: 'New event added! Check event section.'
-    }
-};
+
 
 exports.sendEventNotification = async (req, res, next) => {
     const tokens = await FcmToken.find();
     const fcmTokens = tokens.map((token) => {
         return token.fcmToken
     })
+
+    const message_notification = {
+        notification: {
+            title: 'Hello',
+            body: 'New event added! Check event section.'
+        }
+    };
+
     const message = message_notification
     const options = notification_options
 
     admin.messaging().sendToDevice(fcmTokens, message, options)
         .then(response => {
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
 
-            res.status(200).send("Notification sent successfully")
 
+exports.sendNewsNotification = async (req, res, next) => {
+    const tokens = await FcmToken.find();
+    const fcmTokens = tokens.map((token) => {
+        return token.fcmToken
+    })
+
+    const message_notification = {
+        notification: {
+            title: 'Hello',
+            body: 'There is news!!! Check news section.'
+        }
+    };
+
+    const message = message_notification
+    const options = notification_options
+
+    admin.messaging().sendToDevice(fcmTokens, message, options)
+        .then(response => {
         })
         .catch(error => {
             console.log(error);
