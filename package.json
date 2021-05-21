@@ -16,8 +16,12 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-mongo-sanitize": "^2.1.0",
+    "express-rate-limit": "^5.2.6",
     "express-session": "^1.17.1",
     "firebase-admin": "^9.7.0",
+    "helmet": "^4.6.0",
+    "hpp": "^0.2.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.18",
     "multer": "^1.4.2",
@@ -33,7 +37,8 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "sharp": "^0.28.0",
-    "validator": "^13.5.2"
+    "validator": "^13.5.2",
+    "xss-clean": "^0.1.1"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0"
