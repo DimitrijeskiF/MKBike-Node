@@ -7,7 +7,9 @@ exports.createPrice = async (req, res) => {
         await price.save();
         res.status(201).send({ price });
     } catch (error) {
-        res.status(400).send();
+        res.status(400).json({
+            message: 'There is some problem, please check later!',
+        });
     }
 }
 
@@ -16,7 +18,9 @@ exports.findPricesForYoung = async (req, res) => {
         const price = await Price.findOne({ type: 'young' })
         res.status(200).send({ price: price.prices});
     } catch (error) {
-        res.status(404).send();
+        res.status(400).json({
+            message: 'There is some problem, please check later!',
+        });
     }
 }
 
@@ -25,7 +29,9 @@ exports.findPricesForWorkers = async (req, res) => {
         const price = await Price.findOne({ type: 'worker' })
         res.status(200).send({ price: price.prices });
     } catch (error) {
-        res.status(404).send();
+        res.status(400).json({
+            message: 'There is some problem, please check later!',
+        });
     }
 }
 
@@ -34,6 +40,8 @@ exports.findPricesForRetiree = async (req, res) => {
         const price = await Price.findOne({ type: 'retiree' })
         res.status(200).send({ price: price.prices });
     } catch (error) {
-        res.status(404).send();
+        res.status(400).json({
+            message: 'There is some problem, please check later!',
+        });
     }
 }

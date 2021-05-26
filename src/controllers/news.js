@@ -14,6 +14,7 @@ exports.createNews = async(req, res) => {
     } catch (error) {
         res.json({
             success: false,
+            message: 'There is some problem, please check later!',
             error
         })
     }

@@ -25,9 +25,9 @@ exports.addPoint = async (req, res, next) => {
         console.log(error);
         if(error.code === 11000) {
            return res.status(400).json({
-               error: 'This store already exist'
+               message: 'This store already exist'
            });
         }
-        res.status(500).json({ error: 'Server error' })
+        res.status(500).json({ message: 'Server error' })
     }
 }

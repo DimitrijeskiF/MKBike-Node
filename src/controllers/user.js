@@ -49,14 +49,18 @@ exports.loginWithPassport = async (req, res, next) => {
     async (err, user) => {
       try {
         if (err || !user) {
-          res.status(401).json({ message: 'User not found, enter correct credentials!'})
-          return next(err);
+          const error = new Error('An error occurred. Please try later');
+          res.status(401).json({
+            message:'Enter correct credentials'
+          })
+          return next(error);
         }
 
         req.login(
           user,
           { session: false },
           async (error) => {
+            console.log('Error2: ' + error);
             if (error) return next(error);
 
             const body = { _id: user._id, email: user.email };

@@ -26,6 +26,7 @@ exports.getEvents = async (req, res) => {
         })
     } catch (error) {
         res.status(400).json({
+            message:'There is some problem, please try later!',
             success: false
         })
     }

@@ -36,7 +36,7 @@ app.use(hpp())
 //Limiting http requests
 const limiter = rateLimit({
   windowMs: 10 * 60 * 100,
-  max: 1
+  max: 100
 })
 app.use(limiter)
 
