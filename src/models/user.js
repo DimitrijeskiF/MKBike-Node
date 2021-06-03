@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
     },
     sex: {
         type: String,
+        enum: ['Male', 'Female', 'other'],
     },
     ages: {
         type: Number,
@@ -44,22 +45,23 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 7
     },
-    tokens: [{
-        token: {
-            type: String,
-            required: true
-        }
-    }],
     image: {
-        type: Buffer
+        type: String
     },
     position: {
         type: String
     },
     role: {
         type: String,
+        trim: true,
+        enum: ['user'],
         default: 'user'
-    }
+    },
+    fcmTokens: [{
+        type: String,
+        default: [],
+        trim: true,
+    }]
 })
 
 userSchema.pre('save', async function (next) {
@@ -90,9 +92,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 userSchema.methods.generateAuthToken = async function (req, res) {
     const user = this;
     const token = jwt.sign({ _id: user._id.toString }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    user.tokens = user.tokens.concat({ token: token })
     await user.save();
-
     return token;
 }
 
@@ -101,19 +101,19 @@ userSchema.methods.toJSON = function () {
     const userObject = user.toObject();
 
     delete userObject.password;
-    delete userObject.tokens;
+    delete userObject.fcmTokens;
 
     return userObject;
 }
 
 
 
-userSchema.methods.isValidPassword = async function(password) {
+userSchema.methods.isValidPassword = async function (password) {
     const user = this;
     const compare = await bcrypt.compare(password, user.password);
 
     return compare;
-  }
+}
 
 
 

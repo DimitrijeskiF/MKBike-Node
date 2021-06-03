@@ -34,10 +34,12 @@ exports.getTokens = async (req, res) => {
     try {
         const tokens = await FcmToken.find();
         res.status(200).json({
+            success:true,
             tokens
         })
     } catch (error) {
         res.status(400).json({
+            success: false,
             success: false
         })
     }

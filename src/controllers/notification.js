@@ -1,6 +1,4 @@
 const { admin } = require('../utils/admin-firebase');
-const FcmToken = require('../models/FcmToken')
-
 
 const notification_options = {
     priority: "high",
@@ -10,11 +8,7 @@ const notification_options = {
 
 
 exports.sendEventNotification = async (req, res, next) => {
-    const tokens = await FcmToken.find();
-    const fcmTokens = tokens.map((token) => {
-        return token.fcmToken
-    })
-
+    const fcmTokens = req.user.fcmTokens
     const message_notification = {
         notification: {
             title: 'Hello',
@@ -35,11 +29,7 @@ exports.sendEventNotification = async (req, res, next) => {
 
 
 exports.sendNewsNotification = async (req, res, next) => {
-    const tokens = await FcmToken.find();
-    const fcmTokens = tokens.map((token) => {
-        return token.fcmToken
-    })
-
+    const fcmTokens = req.user.fcmTokens
     const message_notification = {
         notification: {
             title: 'Hello',

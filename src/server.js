@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-
+const fileupload = require('express-fileupload')
+const path = require('path')
 
 const userRouter = require('./routers/user');
 const pointsRouter = require('./routers/points');
@@ -18,7 +19,6 @@ const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
 
 const passport = require('passport');
-const path = require('path');
 let cors = require('cors')
 
 const port = process.env.PORT;
@@ -26,6 +26,8 @@ const port = process.env.PORT;
 
 app.use(express.json());
 app.use(cors())
+app.use(fileupload())
+app.use(express.static(path.join(__dirname, 'uploads')))
 
 //Security
 app.use(mongoSanitize());

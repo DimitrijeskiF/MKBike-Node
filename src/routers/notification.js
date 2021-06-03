@@ -5,7 +5,7 @@ const notifications = require('../controllers/notification');
 const passport = require('passport');
 const { authorize } = require('../middleware/admin');
 
-// router.use(passport.authenticate('jwt', { session: false }),)
+router.use(passport.authenticate('jwt', { session: false }),)
 // router.use(authorize('admin'))
 
 

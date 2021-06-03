@@ -4,7 +4,8 @@ const localUri = process.env.LOCAL_URI;
 mongoose.connect(localUri, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 }, (err) => {
     if (err) {
         console.log('Connection Failed', err);

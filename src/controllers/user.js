@@ -1,8 +1,11 @@
 const User = require('../models/user');
+const path = require('path')
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const multer = require('multer')
 const sharp = require('sharp');
+const { uuid } = require('uuidv4');
+const { log } = require('console');
 require('../auth/auth');
 
 exports.createUser = async (req, res) => {
@@ -15,33 +18,15 @@ exports.createUser = async (req, res) => {
   } else {
     user.position = 'worker'
   }
-
   try {
     await user.save();
-    const token = await user.generateAuthToken();
-    res.status(201).json({ message: 'Successfully Registered!' });
+    res.status(201).json({ success: true, message: 'Successfully Registered!' });
   } catch (error) {
-    res.status(400).json({ message: 'Invalid authentication credentials!' });
+    res.status(400).json({ success: false, message: 'Invalid authentication credentials!' });
   }
 }
 
-exports.login = async (req, res) => {
-  try {
 
-    const user = await User.findByCredentials(req.body.email, req.body.password);
-    const token = await user.generateAuthToken()
-
-    // res.cookie('accessToken', token, {
-    //   httpOnly: true,
-    //   signed: true,
-    //   sameSite: false
-    // })
-    // res.send({ token, expiresIn: 3600 });
-    res.json({ token, expiresIn: 3600, user })
-  } catch (error) {
-    res.status(400).send(error);
-  }
-}
 
 exports.loginWithPassport = async (req, res, next) => {
   passport.authenticate(
@@ -51,7 +36,7 @@ exports.loginWithPassport = async (req, res, next) => {
         if (err || !user) {
           const error = new Error('An error occurred. Please try later');
           res.status(401).json({
-            message:'Enter correct credentials'
+            message: 'Enter correct credentials'
           })
           return next(error);
         }
@@ -60,7 +45,6 @@ exports.loginWithPassport = async (req, res, next) => {
           user,
           { session: false },
           async (error) => {
-            console.log('Error2: ' + error);
             if (error) return next(error);
 
             const body = { _id: user._id, email: user.email };
@@ -76,83 +60,101 @@ exports.loginWithPassport = async (req, res, next) => {
   )(req, res, next);
 }
 
-exports.logout = async (req, res) => {
-  try {
-    req.user.tokens = req.user.tokens.filter((token) => {
-      return token.token !== req.token;
-    })
-
-    await req.user.save();
-
-    res.send()
-  } catch (error) {
-    res.status(500).send();
-  }
-}
-
-exports.logoutAll = async (req, res) => {
-  try {
-    req.user.tokens = [];
-    await req.user.save();
-    res.send();
-  } catch (error) {
-    res.status(500).send();
-  }
-}
-
 exports.readProfile = async (req, res) => {
-  res.cookie('readme', 'readme')
-  res.send(req.user);
+  const user = req.user;
+  res.status(200).json({
+    success: true,
+    user
+  });
 }
 
-exports.deactivate = async (req, res) => {
-  try {
-    await req.user.remove()
-    res.send(req.user);
-  } catch (error) {
-    res.status(500).send();
+exports.userPhotoUpload = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      message: 'User not found!'
+    })
   }
-}
 
-exports.upload = multer({
-  limits: {
-    fileSize: 2000000
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error('Please upload picture'))
+  if (!req.files) {
+    res.status(400).json({
+      success: false,
+      message: 'Please upload file!'
+    })
+  }
+
+  const file = req.files.file;
+
+  if (!file.mimetype.startsWith('image')) {
+    res.status(400).json({
+      success: false,
+      message: 'Please upload an image file!'
+    })
+  }
+
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+    res.status(400).json({
+      success: false,
+      message: 'Please upload an image less than 10MB!'
+    })
+  }
+
+  file.name = `${uuid()}${path.parse(file.name).ext}`;
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        message: 'Please upload an image less than 10MB!'
+      })
     }
 
-    return cb(undefined, true);
+    await User.findByIdAndUpdate(req.params.id, { image: file.name })
+
+    res.status(200).json({
+      success: true,
+      data: file.name
+    })
+  })
+}
+
+
+exports.createFcmToken = async (req, res) => {
+  const fcmToken = req.body.fcmToken
+  const tokens = req.user.fcmTokens;
+  const exists = tokens.includes(fcmToken)
+  if(exists) {
+    return null
   }
-})
-
-exports.uploadProfileImage = async (req, res) => {
-  const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
-  req.user.image = buffer;
+  req.user.fcmTokens.push(fcmToken);
   await req.user.save();
-  res.send()
 }
 
-exports.deleteProfilePicture = async (req, res) => {
-  req.user.image = undefined;
-  await req.user.save();
-  res.send();
-}
 
-exports.getProfilePicture = async (req, res) => {
+exports.login = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user || !user.image) {
-      throw new Error();
-    }
 
-    res.set('Content-Type', 'image/jpg');
-    res.send(user.image);
+    const user = await User.findByCredentials(req.body.email, req.body.password);
+    const token = await user.generateAuthToken()
+
+    // res.cookie('accessToken', token, {
+    //   httpOnly: true,
+    //   signed: true,
+    //   sameSite: false
+    // })
+    // res.send({ token, expiresIn: 3600 });
+    res.json({ success: true, token, expiresIn: 3600, user })
   } catch (error) {
-    res.status(404).send()
+    res.status(400).json({
+      success: false,
+      error
+    });
   }
 }
+
+
 
 
 
