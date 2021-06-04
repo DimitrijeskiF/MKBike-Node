@@ -18,15 +18,30 @@ exports.createEvent = async (req, res) => {
 
 
 exports.getEvents = async (req, res) => {
+    const limit = +req.query.limit
+    const page = +req.query.page;
+
     try {
-      const events = await Event.find()
+        let events
+        if (limit && page) {
+            events = await Event.find()
+                .sort([['date', -1]])
+                .skip(limit * (page - 1))
+                .limit(limit)
+        } else {
+            events = await Event.find()
+        }
+
         res.status(200).json({
+            count: await Event.count(),
+            currentPage: page,
             success: true,
+            total: events.length,
             events
         })
     } catch (error) {
         res.status(400).json({
-            message:'There is some problem, please try later!',
+            message: 'There is some problem, please try later!',
             success: false,
             error
         })

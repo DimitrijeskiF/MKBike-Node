@@ -20,10 +20,25 @@ exports.createNews = async (req, res) => {
 }
 
 exports.getNews = async (req, res) => {
+    const limit = +req.query.limit
+    const page = +req.query.page;
+
     try {
-        const news = await News.find();
+        let news
+        if (limit && page) {
+            news = await News.find()
+                .sort([['cratedAt', -1]])
+                .skip(limit * (page - 1))
+                .limit(limit)
+        } else {
+            news = await News.find()
+        }
+
         res.status(200).json({
+            count: await News.count(),
+            currentPage: page,
             success: true,
+            total: news.length,
             news
         })
     } catch (error) {
