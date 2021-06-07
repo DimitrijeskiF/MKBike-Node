@@ -25,7 +25,7 @@ exports.getEvents = async (req, res) => {
         let events
         if (limit && page) {
             events = await Event.find()
-                .sort([['date', -1]])
+                .sort([['createdAt', -1]])
                 .skip(limit * (page - 1))
                 .limit(limit)
         } else {
@@ -33,7 +33,7 @@ exports.getEvents = async (req, res) => {
         }
 
         res.status(200).json({
-            count: await Event.count(),
+            count: await Event.countDocuments(),
             currentPage: page,
             success: true,
             total: events.length,

@@ -9,7 +9,7 @@ const priceRouter = require('./routers/price');
 const eventRouter = require('./routers/events');
 const newsRouter = require('./routers/news');
 const notificationRouter = require('./routers/notification');
-const fcmTokenRouter = require('./routers/fcmTokens');
+
 const adminRouter = require('./routers/admin');
 
 const mongoSanitize = require('express-mongo-sanitize');
@@ -55,7 +55,6 @@ app.use(priceRouter);
 app.use(eventRouter);
 app.use(newsRouter);
 app.use(notificationRouter);
-app.use(fcmTokenRouter);
 app.use(adminRouter);
 
 

@@ -11,7 +11,7 @@ const NewsSchema = new mongoose.Schema({
     content: {
         type: String
     },
-    cratedAt: {
+    createdAt: {
         type: Date,
         default: Date.now
     }

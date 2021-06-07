@@ -27,7 +27,7 @@ exports.getNews = async (req, res) => {
         let news
         if (limit && page) {
             news = await News.find()
-                .sort([['cratedAt', -1]])
+                .sort([['createdAt', -1]])
                 .skip(limit * (page - 1))
                 .limit(limit)
         } else {
@@ -35,7 +35,7 @@ exports.getNews = async (req, res) => {
         }
 
         res.status(200).json({
-            count: await News.count(),
+            count: await News.countDocuments(),
             currentPage: page,
             success: true,
             total: news.length,

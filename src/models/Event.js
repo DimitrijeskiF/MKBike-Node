@@ -15,6 +15,10 @@ const EventSchema = new mongoose.Schema({
     },
     thumbnail: {
         type: String
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
