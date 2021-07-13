@@ -126,7 +126,7 @@ exports.createFcmToken = async (req, res) => {
   const tokens = req.user.fcmTokens;
   const exists = tokens.includes(fcmToken)
   if(exists) {
-    return null
+    return 
   }
   req.user.fcmTokens.push(fcmToken);
   await req.user.save();

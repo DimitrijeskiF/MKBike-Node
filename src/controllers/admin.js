@@ -1,10 +1,26 @@
 const User = require('../models/user');
 
 exports.getUsers = async (req, res) => {
+    const limit = +req.query.limit
+    const page = +req.query.page;
+
     try {
-        const users = await User.find();
+        let users;
+
+        if (limit && page) {
+            users = await User.find()
+                .skip(limit * (page - 1))
+                .limit(limit)
+        } else {
+            users = await Userf.find()
+        }
+
+        // const users = await User.find();
         res.status(200).json({
+            count: await User.countDocuments(),
+            currentPage: page,
             success: true,
+            total: users.length,
             users
         })
     } catch (error) {

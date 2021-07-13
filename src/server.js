@@ -3,13 +3,14 @@ const app = express();
 const fileupload = require('express-fileupload')
 const path = require('path')
 
+require('dotenv').config();
+
 const userRouter = require('./routers/user');
 const pointsRouter = require('./routers/points');
 const priceRouter = require('./routers/price');
 const eventRouter = require('./routers/events');
 const newsRouter = require('./routers/news');
 const notificationRouter = require('./routers/notification');
-
 const adminRouter = require('./routers/admin');
 
 const mongoSanitize = require('express-mongo-sanitize');
@@ -19,7 +20,7 @@ const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
 
 const passport = require('passport');
-let cors = require('cors')
+let cors = require('cors');
 
 const port = process.env.PORT;
 
@@ -62,7 +63,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 })
 
-app.listen(port, () => {
+module.exports = app.listen(port, () => {
   console.log('Server is running on ' + port);
 })
 

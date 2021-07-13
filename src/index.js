@@ -1,3 +1,5 @@
+require('dotenv').config();
 require('./db/mongoose')
-require('./server')
+const server = require('./server')
 
+module.exports = server
