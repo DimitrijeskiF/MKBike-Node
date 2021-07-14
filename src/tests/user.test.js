@@ -1,70 +1,86 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const should = chai.should();
-var User = require('../models/user');
+const mongoose = require('mongoose');
+const { expect } = chai;
+
+const {server} = require('../index');
+
 chai.use(chaiHttp);
 
-const server = require('../index')
+let token;
 
+describe('User Routes', () => {
+    const register = '/users';
+    const login = '/login';
 
-describe('User API', function () {
-    beforeEach(function (done) {
-        var newUser = new User({
-            'firstName': 'Filip',
-            'lastName': 'Dimitrijeski',
-            'sex': 'Male',
-            'ages': 23,
-            'email': 'filip@gmail.com',
-            'password': 'filip123',
-            'role': 'Admin'
+    const user = {
+        firstName: 'Filip',
+        lastName: 'Dimitrijeski',
+        ages: 23,
+        sex: 'Male',
+        email: 'filip@gmail.com',
+        password: '1234567',
+        role: 'user'
+    }
+
+    const preSave = {
+        firstName: 'Filip',
+        lastName: 'Dimitrijeski',
+        ages: 23,
+        sex: 'Male',
+        email: 'filip2@gmail.com',
+        password: '1234567',
+        role: 'user'
+    }
+
+    before(async () => {
+        const result = await chai
+            .request(server)
+            .post(register)
+            .send(user);
+        expect(result.status).to.equal(201);
+    });
+
+    after('droping test db', async () => {
+        await mongoose.connection.dropDatabase(() => {
+            console.log('\n Test database dropped');
         });
-        newUser.save(function (err) {
-            done();
+        await mongoose.connection.close();
+    });
+
+
+    describe('Register', () => {
+        it('should crete new user if email not found', async () => {
+            try {
+                const result = await chai
+                    .request(server)
+                    .post(register)
+                    .send(user);
+                console.log('Result ' + result.body);
+                expect(result.status).to.equal(201);
+                // expect(result.body).not.to.be.empty;
+            } catch (error) {
+                console.log(error);
+            }
         });
     });
 
-    afterEach(function (done) {
-        User.collection.drop().then(function () {
-            // success
-        }).catch(function () {
-
-            // error handling
-            console.warn(' collection may not exists!');
-        })
-        done();
+    describe('Login', (done) => {
+        it('should return 201 and our token', async () => {
+            try {
+                const result = await chai
+                    .request(server)
+                    .post(login)
+                    .send({
+                        email: 'filip@gmail.com',
+                        password: '1234567',
+                    });
+                expect(result.status).to.be.equal(201);
+                expect(result.body).not.to.be.empty;
+                expect(result.body).to.have.property('token');
+            } catch (error) {
+                throw new Error(error);
+            }
+        });
     });
-
-
-    it('Should register User', function (done) {
-        chai.request(server)
-            .post('/users')
-            .send({
-                'firstName': 'Filip',
-                'lastName': 'Dimitrijeski',
-                'sex': 'Male',
-                'ages': 23,
-                'email': 'filip2@gmail.com',
-                'password': 'filip123',
-                'role': 'user'
-            })
-            .end((err, res) => {
-                res.should.have.status(201)
-                done()
-            })
-    })
-
-    it('Should login User', function () {
-        chai.request(server)
-            .post('/login')
-            .send({
-                'email': 'filip2@gmail.com',
-                'password': 'filip123',
-            })
-            .end(function (err, res){
-                res.body.should.have.property('token');
-                let token = res.body.token;
-                console.log('token: ' + token);
-                done();
-            })
-    })
 });

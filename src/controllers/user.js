@@ -50,7 +50,7 @@ exports.loginWithPassport = async (req, res, next) => {
             const body = { _id: user._id, email: user.email };
             const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 
-            return res.json({ token, expiresIn: 3600, user });
+            return res.status(201).json({ token, expiresIn: 3600, user });
           }
         );
       } catch (error) {
@@ -126,7 +126,7 @@ exports.createFcmToken = async (req, res) => {
   const tokens = req.user.fcmTokens;
   const exists = tokens.includes(fcmToken)
   if(exists) {
-    return 
+    return
   }
   req.user.fcmTokens.push(fcmToken);
   await req.user.save();
