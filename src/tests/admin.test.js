@@ -8,12 +8,14 @@ const { server } = require('../index');
 chai.use(chaiHttp);
 
 let token;
+let role;
 
 describe('User Routes', () => {
     const register = '/users';
     const login = '/login';
     const readProfile = '/users/me';
-    const fcmToken = '/users/fcmToken'
+    const addUserAsAdmin = '/admin';
+    const getUsers = '/admin?limit=1&page=1';
 
     const user = {
         firstName: 'Filip',
@@ -22,26 +24,18 @@ describe('User Routes', () => {
         sex: 'Male',
         email: 'filip@gmail.com',
         password: '1234567',
-        role: 'user'
+        role: 'admin'
     }
 
-    const preSave = {
-        firstName: 'Filip',
-        lastName: 'Dimitrijeski',
+    const user2 = {
+        firstName: 'Test',
+        lastName: 'Testovski',
         ages: 23,
         sex: 'Male',
-        email: 'filip2@gmail.com',
+        email: 'test@gmail.com',
         password: '1234567',
         role: 'user'
     }
-
-    before(async () => {
-        const result = await chai
-            .request(server)
-            .post(register)
-            .send(preSave);
-        expect(result.status).to.equal(201);
-    });
 
     after('droping test db', async () => {
         await mongoose.connection.dropDatabase(() => {
@@ -85,33 +79,48 @@ describe('User Routes', () => {
         });
     });
 
-    describe('My Profile', () => {
+    describe('Get Role', () => {
         it('Should get my profile', async () => {
             try {
                 const result = await chai
                     .request(server)
                     .get(readProfile)
                     .set('Authorization', 'Bearer ' + token);
-                    console.log('ROLE: '+ result.body.user.role);
                 expect(result.status).to.equal(200);
+                role = result.body.user.role;
             } catch (error) {
                 throw new Error(error);
 
             }
         })
-    })
+    });
 
-    describe('Fcm Token', () => {
-        it('Should set fcmToken', async () => {
+    describe('Add User as Admin', () => {
+        it('should add user as admin', async () => {
             try {
                 const result = await chai
                     .request(server)
-                    .post(fcmToken)
-                    .send({
-                        fcmToken: 'dhLkJj3mqswzXoyJnfsGinsYA3lGqkzAfDaUPlIGHRphl'
-                    })
+                    .post(addUserAsAdmin)
+                    .send(user2)
                     .set('Authorization', 'Bearer ' + token);
+                expect(role).to.equal('admin');
                 expect(result.status).to.equal(201);
+
+            } catch (error) {
+                throw new Error(error);
+            }
+        })
+    })
+
+    describe('Get all Users as Admin', () => {
+        it('should get users as admin', async () => {
+            try {
+                const result = await chai
+                    .request(server)
+                    .get(getUsers)
+                    .set('Authorization', 'Bearer ' + token);
+                expect(role).to.equal('admin');
+                expect(result.status).to.equal(200);
             } catch (error) {
                 throw new Error(error);
             }

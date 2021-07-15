@@ -122,14 +122,25 @@ exports.userPhotoUpload = async (req, res) => {
 
 
 exports.createFcmToken = async (req, res) => {
-  const fcmToken = req.body.fcmToken
-  const tokens = req.user.fcmTokens;
-  const exists = tokens.includes(fcmToken)
-  if(exists) {
-    return
+  try {
+    const fcmToken = req.body.fcmToken
+    const tokens = req.user.fcmTokens;
+    const exists = tokens.includes(fcmToken)
+    if (exists) {
+      return
+    }
+    req.user.fcmTokens.push(fcmToken);
+    await req.user.save();
+    res.status(201).json({
+      success: true
+    })
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Try latter'
+    })
   }
-  req.user.fcmTokens.push(fcmToken);
-  await req.user.save();
+
 }
 
 
