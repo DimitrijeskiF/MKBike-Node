@@ -11,13 +11,13 @@ let token;
 let role;
 let id;
 
-describe('User Routes', () => {
+describe('Events Routes', () => {
     const register = '/users';
     const login = '/login';
     const readProfile = '/users/me';
-    const addUserAsAdmin = '/admin';
-    const deleteUserAsAdmin = '/admin/';
-    const getUsers = '/admin?limit=1&page=1';
+    const addNews = '/news';
+    const deleteNews = '/news/'
+    const getNews = '/news?limit=1&page1'
 
     const user = {
         firstName: 'Filip',
@@ -29,14 +29,10 @@ describe('User Routes', () => {
         role: 'admin'
     }
 
-    const user2 = {
-        firstName: 'Test',
-        lastName: 'Testovski',
-        ages: 23,
-        sex: 'Male',
-        email: 'test@gmail.com',
-        password: '1234567',
-        role: 'user'
+    const news = {
+        title: "Fixing Bikes",
+        img: "bwchbwcwchjwhcbwhbwhcb",
+        content: "Bikes will be not available next few days"
     }
 
     after('droping test db', async () => {
@@ -82,7 +78,7 @@ describe('User Routes', () => {
     });
 
     describe('Get Role', () => {
-        it('Should get my profile', async () => {
+        it('Should get my role of logged in user', async () => {
             try {
                 const result = await chai
                     .request(server)
@@ -92,50 +88,47 @@ describe('User Routes', () => {
                 role = result.body.user.role;
             } catch (error) {
                 throw new Error(error);
-
             }
         })
     });
 
-    describe('Add User as Admin', () => {
-        it('should add user as admin', async () => {
+    describe('Add news', () => {
+        it('Should add news as admin', async () => {
             try {
                 const result = await chai
                     .request(server)
-                    .post(addUserAsAdmin)
-                    .send(user2)
+                    .post(addNews)
+                    .send(news)
                     .set('Authorization', 'Bearer ' + token);
-                expect(role).to.equal('admin');
-                expect(result.status).to.equal(201);
-
+                expect(role).to.equal('admin')
+                expect(result.status).to.equal(201)
             } catch (error) {
                 throw new Error(error);
             }
         })
     })
 
-    describe('Get all Users as Admin', () => {
-        it('should get users as admin', async () => {
+    describe('Get News', () => {
+        it('Should get all news', async () => {
             try {
                 const result = await chai
                     .request(server)
-                    .get(getUsers)
+                    .get(getNews)
                     .set('Authorization', 'Bearer ' + token);
-                expect(role).to.equal('admin');
-                expect(result.status).to.equal(200);
-                id = result.body.users[0]._id;
+                    id = result.body.news[0]._id
+                expect(result.status).to.equal(200)
             } catch (error) {
                 throw new Error(error);
             }
         })
-    })
+    });
 
-    describe('Delete a User', () => {
-        it('Should delete a user as admin', async () => {
+    describe('Delete a news', () => {
+        it('Should delete a news', async () => {
             try {
                 const result = await chai
                     .request(server)
-                    .delete(deleteUserAsAdmin + id)
+                    .delete(deleteNews + id)
                     .set('Authorization', 'Bearer ' + token);
                 expect(result.status).to.equal(204);
                 expect(role).to.equal('admin');
@@ -144,5 +137,4 @@ describe('User Routes', () => {
             }
         })
     })
-
 });

@@ -9,15 +9,13 @@ chai.use(chaiHttp);
 
 let token;
 let role;
-let id;
 
-describe('User Routes', () => {
+describe('Events Routes', () => {
     const register = '/users';
     const login = '/login';
     const readProfile = '/users/me';
-    const addUserAsAdmin = '/admin';
-    const deleteUserAsAdmin = '/admin/';
-    const getUsers = '/admin?limit=1&page=1';
+    const addPoint = '/points'
+    const getPoints = '/points'
 
     const user = {
         firstName: 'Filip',
@@ -29,14 +27,8 @@ describe('User Routes', () => {
         role: 'admin'
     }
 
-    const user2 = {
-        firstName: 'Test',
-        lastName: 'Testovski',
-        ages: 23,
-        sex: 'Male',
-        email: 'test@gmail.com',
-        password: '1234567',
-        role: 'user'
+    const point = {
+        address: "Boulevard Mitropolit Teodosij Gologanov, 42 Skopje 1000"
     }
 
     after('droping test db', async () => {
@@ -82,7 +74,7 @@ describe('User Routes', () => {
     });
 
     describe('Get Role', () => {
-        it('Should get my profile', async () => {
+        it('Should get my role of logged in user', async () => {
             try {
                 const result = await chai
                     .request(server)
@@ -92,57 +84,38 @@ describe('User Routes', () => {
                 role = result.body.user.role;
             } catch (error) {
                 throw new Error(error);
-
             }
         })
     });
 
-    describe('Add User as Admin', () => {
-        it('should add user as admin', async () => {
+
+    describe('Add Point', () => {
+        it('Should add point as admin', async () => {
             try {
                 const result = await chai
                     .request(server)
-                    .post(addUserAsAdmin)
-                    .send(user2)
+                    .post(addPoint)
+                    .send(point)
                     .set('Authorization', 'Bearer ' + token);
-                expect(role).to.equal('admin');
                 expect(result.status).to.equal(201);
-
+                expect(role).to.equal('admin');
             } catch (error) {
                 throw new Error(error);
             }
         })
-    })
+    });
 
-    describe('Get all Users as Admin', () => {
-        it('should get users as admin', async () => {
+    describe('Get Point', () => {
+        it('Should get point', async () => {
             try {
                 const result = await chai
                     .request(server)
-                    .get(getUsers)
+                    .get(getPoints)
                     .set('Authorization', 'Bearer ' + token);
-                expect(role).to.equal('admin');
                 expect(result.status).to.equal(200);
-                id = result.body.users[0]._id;
             } catch (error) {
                 throw new Error(error);
             }
         })
-    })
-
-    describe('Delete a User', () => {
-        it('Should delete a user as admin', async () => {
-            try {
-                const result = await chai
-                    .request(server)
-                    .delete(deleteUserAsAdmin + id)
-                    .set('Authorization', 'Bearer ' + token);
-                expect(result.status).to.equal(204);
-                expect(role).to.equal('admin');
-            } catch (error) {
-                throw new Error(error);
-            }
-        })
-    })
-
+    });
 });
