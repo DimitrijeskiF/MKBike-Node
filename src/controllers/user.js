@@ -69,55 +69,62 @@ exports.readProfile = async (req, res) => {
 }
 
 exports.userPhotoUpload = async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (!user) {
-    res.status(404).json({
-      success: false,
-      message: 'User not found!'
-    })
-  }
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found!'
+      })
+    }
 
-  if (!req.files) {
-    res.status(400).json({
-      success: false,
-      message: 'Please upload file!'
-    })
-  }
+    if (!req.files) {
+      res.status(400).json({
+        success: false,
+        message: 'Please upload file!'
+      })
+    }
 
-  const file = req.files.file;
+    const file = req.files.file;
 
-  if (!file.mimetype.startsWith('image')) {
-    res.status(400).json({
-      success: false,
-      message: 'Please upload an image file!'
-    })
-  }
+    if (!file.mimetype.startsWith('image')) {
+      res.status(400).json({
+        success: false,
+        message: 'Please upload an image file!'
+      })
+    }
 
-  if (file.size > process.env.MAX_FILE_UPLOAD) {
-    res.status(400).json({
-      success: false,
-      message: 'Please upload an image less than 10MB!'
-    })
-  }
-
-  file.name = `${uuid()}${path.parse(file.name).ext}`;
-
-  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
-    if (err) {
-      console.log(err);
-      res.status(500).json({
+    if (file.size > process.env.MAX_FILE_UPLOAD) {
+      res.status(400).json({
         success: false,
         message: 'Please upload an image less than 10MB!'
       })
     }
 
-    await User.findByIdAndUpdate(req.params.id, { image: file.name })
+    file.name = `${uuid()}${path.parse(file.name).ext}`;
 
-    res.status(200).json({
-      success: true,
-      data: file.name
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({
+          success: false,
+          message: 'Please upload an image less than 10MB!'
+        })
+      }
+
+      await User.findByIdAndUpdate(req.params.id, { image: file.name })
+
+      res.status(200).json({
+        success: true,
+        data: file.name
+      })
     })
-  })
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Try latter'
+    })
+  }
 }
 
 

@@ -2,12 +2,15 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
 const { expect } = chai;
+const fs = require('fs')
+
 
 const { server } = require('../index');
 
 chai.use(chaiHttp);
 
 let token;
+let id;
 
 describe('User Routes', () => {
     const register = '/users';
@@ -92,8 +95,9 @@ describe('User Routes', () => {
                     .request(server)
                     .get(readProfile)
                     .set('Authorization', 'Bearer ' + token);
-                    console.log('ROLE: '+ result.body.user.role);
+                role =  result.body.user.role;
                 expect(result.status).to.equal(200);
+                id = result.body.user._id
             } catch (error) {
                 throw new Error(error);
 
@@ -114,6 +118,22 @@ describe('User Routes', () => {
                 expect(result.status).to.equal(201);
             } catch (error) {
                 throw new Error(error);
+            }
+        })
+    })
+
+    describe('Upload Image', () => {
+        it('Should upload profile picture', async () => {
+            try {
+                const result = await chai
+                    .request(server)
+                    .put('/users/' + id + '/photo')
+                    .set('Content-Type', 'multipart/form-data')
+                    .attach('file','./test.jpg')
+                    .set('Authorization', 'Bearer ' + token)
+                expect(result.status).to.equal(200);
+            } catch (error) {
+                throw new Error(error)
             }
         })
     })
