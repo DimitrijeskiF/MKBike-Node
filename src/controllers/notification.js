@@ -21,9 +21,16 @@ exports.sendEventNotification = async (req, res, next) => {
 
     admin.messaging().sendToDevice(fcmTokens, message, options)
         .then(response => {
+            res.status(200).json({
+                success: true,
+                response
+            })
         })
         .catch(error => {
-            console.log(error);
+            res.status(400).json({
+                success: false,
+                error
+            })
         });
 }
 
@@ -42,8 +49,15 @@ exports.sendNewsNotification = async (req, res, next) => {
 
     admin.messaging().sendToDevice(fcmTokens, message, options)
         .then(response => {
+            res.status(200).json({
+                success: true,
+                response
+            })
         })
         .catch(error => {
-            console.log(error);
+            res.status(400).json({
+                success: false,
+                error
+            })
         });
 }
